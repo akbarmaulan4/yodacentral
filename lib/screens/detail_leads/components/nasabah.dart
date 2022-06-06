@@ -15,6 +15,7 @@ import 'package:yodacentral/controller/controller_auth.dart/controller_auth.dart
 import 'package:yodacentral/controller/unit/unit_controller.dart';
 import 'package:yodacentral/models/model_detail_nasabah.dart';
 import 'package:http/http.dart' as http;
+import 'package:yodacentral/models/model_save_root.dart';
 import 'package:yodacentral/models/pipeline/pipeline_model.dart';
 import 'package:yodacentral/save_root/save_root.dart';
 import 'package:yodacentral/screens/chat/chat.dart';
@@ -58,8 +59,11 @@ class _NasabahState extends State<Nasabah> {
   bool showHubJamin = false;
   ModelDetailNasabah? modelDetailNasabah;
   List<String> fotoUnits = [];
+  late ModelSaveRoot modelLogin;
   getUnitDetail() async {
+    ModelSaveRoot value = await SaveRoot.callSaveRoot();
     setState(() {
+      modelLogin = value;
       load = true;
     });
 
@@ -455,7 +459,7 @@ class _NasabahState extends State<Nasabah> {
                     ],
                   ),
       ),
-      bottomNavigationBar: load
+      bottomNavigationBar: auth.modelSaveRoot!.userData!.role! != "Marketing Head" ? load
           ? null
           : modelDetailNasabah == null || modelDetailNasabah!.data == null
               ? GestureDetector(
@@ -476,7 +480,7 @@ class _NasabahState extends State<Nasabah> {
                       textColor: Colors.white,
                       text: "Isi Form"),
                 )
-              : null,
+              : null : null,
       floatingActionButton: load
           ? null
           : auth.modelSaveRoot!.userData!.role! == "External"
@@ -576,15 +580,15 @@ class _NasabahState extends State<Nasabah> {
                                             padding: EdgeInsets.fromLTRB(15, 7.5, 30, 7.5),
                                             child: Text("Menu", style: TextStyle(fontSize: 12),),
                                           ),
-                                          ItemBottomSheetMenuCustom(
+                                          modelLogin != null && modelLogin.userData!.role != 'External' || modelLogin != null && modelLogin.userData!.role != 'Marketing Head' ? ItemBottomSheetMenuCustom(
                                             icon: Icon(
                                               Icons.phone,
                                               color: Colors.black,
                                             ),
                                             onTap: () => openwhatsapp(nomerTlp: modelDetailNasabah!.data!.identitas!.nomorTelepon!,),
                                             text: "Hubungi Nasabah",
-                                          ),
-                                          ItemBottomSheetMenuCustom(
+                                          ):SizedBox(),
+                                          modelLogin != null && modelLogin.userData!.role != 'External' || modelLogin != null && modelLogin.userData!.role != 'Marketing Head' ? ItemBottomSheetMenuCustom(
                                             icon: Icon(Icons.chat_rounded, color: Colors.black,),
                                             onTap: () {
                                               Get.back();
@@ -599,7 +603,7 @@ class _NasabahState extends State<Nasabah> {
                                               );
                                             },
                                             text: "Chat & Aktifitas",
-                                          ),
+                                          ):SizedBox(),
                                           ItemBottomSheetMenuCustom(
                                             icon: Icon(
                                               Icons.group,

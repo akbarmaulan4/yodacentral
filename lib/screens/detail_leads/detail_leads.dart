@@ -114,13 +114,13 @@ class _DetailLeadsState extends State<DetailLeads> {
     );
   }
   
-  loadMenu(List<String> data){
-    List<Widget> menu = [];
-    for(String str in  data){
-      menu.add(getChild(str));
-    }
-    return menu;
-  }
+  // loadMenu(List<String> data){
+  //   List<Widget> menu = [];
+  //   for(String str in  data){
+  //     menu.add(getChild(str));
+  //   }
+  //   return menu;
+  // }
   
   getChild(String label){
     switch(label){

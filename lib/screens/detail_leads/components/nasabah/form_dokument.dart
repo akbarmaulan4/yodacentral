@@ -37,14 +37,14 @@ class _FormIDokumenState extends State<FormIDokumen>
     Get.back();
     if(isDoc){
       if(isEdit){
-        XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 100);
+        XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 30);
         if(xFile != null){
           setState(() {
             listDoc[index] = File(xFile.path);
           });
         }
       }else{
-        List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 100);
+        List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 30);
         if (mul!.length == 0) {
           log("kosong", name: "ini unggah foto");
         } else {
@@ -65,7 +65,7 @@ class _FormIDokumenState extends State<FormIDokumen>
         }
       }
     }else{
-      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 100);
+      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 30);
       if (xFile != null) {
         controller.setEnableButtonFoto(xFile.path);
         controller.changeFinalImage(File(xFile.path));
@@ -83,7 +83,7 @@ class _FormIDokumenState extends State<FormIDokumen>
 
   getImageCamera(bool isDoc, bool isEdit, int index) async {
     Get.back();
-    XFile? xFile = await _picker.pickImage(source: ImageSource.camera, imageQuality: 100);
+    XFile? xFile = await _picker.pickImage(source: ImageSource.camera, imageQuality: 30);
     if(isDoc){
       if(isEdit){
         setState(() {
@@ -365,63 +365,64 @@ class _FormIDokumenState extends State<FormIDokumen>
                   text: 'Kirim',
                   onClick: (){
                     if(controller.enableButtonFoto.value){
-                      controller.postIdentitas(context: context, id: widget.lead_id.toString(),
-                          onSuccess:(){
-                            if(controller.enableButtonInstitusi.value){
-                              controller.postPekerjaan(context: context, id: widget.lead_id.toString(), onSuccess:(){
-                                if(controller.enableButtonFoto.value){
-                                  controller.postDokumentNasabah(
-                                      context: context, id: widget.lead_id.toString(),
-                                      path: controller.finalImage.value.path, docs:controller.listDoc,
-                                      imageChange: [], imgDefault: [],
-                                      onSuccess:(){
-                                        successPost();
-                                      }
-                                  );
-                                }else{
-                                  successPost();
-                                }
-                              });
-                            }else{
-                              if(controller.enableButtonFoto.value){
-                                controller.postDokumentNasabah(
-                                    context: context, id: widget.lead_id.toString(),
-                                    path: controller.finalImage.value.path, docs:controller.listDoc,
-                                    imageChange: [], imgDefault: [],
-                                    onSuccess:(){
-                                      successPost();
-                                    }
-                                );
-                              }else{
-                                successPost();
-                              }
-                            }
-                          }
-                      // controller.postDokumentNasabah(context: context, id: widget.lead_id.toString(),
-                      //   path: finalImage!.path, docs: listDoc,
-                      //   imageChange: [], imgDefault: [], onSuccess: (){
-                      //     if(controller.enableButton.value){
-                      //       controller.postIdentitas(context: context, id: widget.lead_id.toString(),
-                      //           onSuccess: (){
-                      //             if(controller.enableButtonInstitusi.value){
-                      //               controller.postPekerjaan(context: context, id: widget.lead_id.toString(), onSuccess:(){
-                      //                 successPost();
-                      //               });
-                      //             }else{
-                      //               successPost();
-                      //             }
-                      //           }
-                      //       );
-                      //     }else{
+                      // controller.postIdentitas(context: context, id: widget.lead_id.toString(),
+                      //     onSuccess:(){
                       //       if(controller.enableButtonInstitusi.value){
                       //         controller.postPekerjaan(context: context, id: widget.lead_id.toString(), onSuccess:(){
-                      //           successPost();
+                      //           if(controller.enableButtonFoto.value){
+                      //             controller.postDokumentNasabah(
+                      //                 context: context, id: widget.lead_id.toString(),
+                      //                 path: controller.finalImage.value.path, docs:controller.listDoc,
+                      //                 imageChange: [], imgDefault: [],
+                      //                 onSuccess:(){
+                      //                   successPost();
+                      //                 }
+                      //             );
+                      //           }else{
+                      //             successPost();
+                      //           }
                       //         });
                       //       }else{
-                      //         successPost();
+                      //         if(controller.enableButtonFoto.value){
+                      //           controller.postDokumentNasabah(
+                      //               context: context, id: widget.lead_id.toString(),
+                      //               path: controller.finalImage.value.path, docs:controller.listDoc,
+                      //               imageChange: [], imgDefault: [],
+                      //               onSuccess:(){
+                      //                 successPost();
+                      //               }
+                      //           );
+                      //         }else{
+                      //           successPost();
+                      //         }
                       //       }
                       //     }
-                      //   }
+
+                      controller.postDokumentNasabah(context: context, id: widget.lead_id.toString(),
+                        path: finalImage!.path, docs: listDoc,
+                        imageChange: [], imgDefault: [], onSuccess: (){
+                          if(controller.enableButton.value){
+                            controller.postIdentitas(context: context, id: widget.lead_id.toString(),
+                                onSuccess: (){
+                                  if(controller.enableButtonInstitusi.value){
+                                    controller.postPekerjaan(context: context, id: widget.lead_id.toString(), onSuccess:(){
+                                      successPost();
+                                    });
+                                  }else{
+                                    successPost();
+                                  }
+                                }
+                            );
+                          }else{
+                            if(controller.enableButtonInstitusi.value){
+                              controller.postPekerjaan(context: context, id: widget.lead_id.toString(), onSuccess:(){
+                                successPost();
+                              });
+                            }else{
+                              successPost();
+                            }
+                          }
+                        }
                       );
                     }
                   }

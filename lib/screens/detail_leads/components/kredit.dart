@@ -57,37 +57,6 @@ class _KreditState extends State<Kredit> {
   List<String> fotoJaminan = [];
   List<String> fotoKontrak = [];
   List<String> allFoto = [];
-  // getUnitDetail() async {
-  //   setState(() {
-  //     load = true;
-  //   });
-  //   var url = '${ApiUrl.domain.toString()}/api/lead/kredit/${widget.unit_id.toString()}';
-  //   print('URL : $url');
-  //   ModelSaveRoot value = await SaveRoot.callSaveRoot();
-  //   print('TOKEN : ${value.token.toString()}');
-  //   var res = await http.get(Uri.parse(url.trim()), headers: {'Authorization': 'Bearer ' + value.token.toString(),});
-  //   if (res.statusCode == 200) {
-  //     var jsonDecode = json.decode(res.body);
-  //     var dataJson = jsonDecode as Map<String, dynamic>;
-  //     var sdsda = json.encode(jsonDecode);
-  //     print('RESPONSE ${json.encode(jsonDecode)}');
-  //     setState(() {
-  //       log(res.body, name: "Unit detail");
-  //       modelDetailKredit = modelDetailKreditFromMap(res.body);
-  //       fotoJaminan = modelDetailKredit!.data!.photo_document!.document_jaminan!;
-  //       fotoKontrak = modelDetailKredit!.data!.photo_document!.document_kontrak!;
-  //       allFoto = fotoJaminan+fotoKontrak;
-  //       load = false;
-  //     });
-  //   } else {
-  //     setState(() {
-  //       load = false;
-  //       log(res.body, name: "Unit detail");
-  //     });
-  //   }
-  // }
-
-
   ControllerAuth auth = Get.put(ControllerAuth());
   UnitController unitController = UnitController();
   KreditController controller = KreditController();
@@ -273,7 +242,7 @@ class _KreditState extends State<Kredit> {
         ),
       )),
 
-      bottomNavigationBar: Obx(()=> controller.dataKredit.value.data == null ? GestureDetector(
+      bottomNavigationBar: auth.modelSaveRoot!.userData!.role! != "Marketing Head" ? Obx(()=> controller.dataKredit.value.data == null ? GestureDetector(
           onTap: () {
             Utils.removeKreditJaminan();
             Utils.removeKreditKontrak();
@@ -286,9 +255,10 @@ class _KreditState extends State<Kredit> {
               backGround: yd_Color_Primary,
               textColor: Colors.white,
               text: "Isi Form"
-          )):SizedBox()),
+          )):SizedBox()):SizedBox(),
 
-      floatingActionButton: Obx(()=> controller.dataKredit.value.data == null ? SizedBox():floatingButton(data: controller.dataKredit.value, onClick: ()=>popUpFloating(controller.dataKredit.value))),
+      floatingActionButton: auth.modelSaveRoot!.userData!.role! != "Marketing Head" ?
+        Obx(()=> controller.dataKredit.value.data == null ? SizedBox():floatingButton(data: controller.dataKredit.value, onClick: ()=>popUpFloating(controller.dataKredit.value))):SizedBox(),
     );
   }
 

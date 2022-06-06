@@ -30,45 +30,11 @@ class _PesionInChangeState extends State<PesionInChange> {
   bool load = true;
   ModelListPic? modelListPic;
   PersonController controller = PersonController();
-  // getPic({required String id}) async {
-  //   setState(() {
-  //     load = true;
-  //   });
-  //   ModelSaveRoot value = await SaveRoot.callSaveRoot();
-  //   var url = '${ApiUrl.domain.toString()}/api/lead/detail_pic/${id.toString()}';
-  //   var res = await http.get(Uri.parse(url.trim()), headers: {'Authorization': 'Bearer ' + value.token.toString()});
-  //
-  //   if (res.statusCode == 200) {
-  //     setState(() {
-  //       modelListPic = modelListPicFromMap(res.body);
-  //       load = false;
-  //     });
-  //     log(res.body);
-  //   } else {
-  //     setState(() {
-  //       load = false;
-  //       rawBottomNotif(
-  //         message: res.body,
-  //         colorFont: Colors.white,
-  //         backGround: Colors.red,
-  //       );
-  //       log(res.body);
-  //     });
-  //   }
-  // }
 
   @override
   void initState() {
     super.initState();
     controller.getNewPIC(leadID: widget.id);
-    // controller.getAllPICRole(onError: (message){});
-    // controller.getAllPICByCabang();
-    // controller.getAllOfficerByLead(leadID: widget.id);
-    // controller.getPIC(id: widget.id, onError: (message)=>rawBottomNotif(
-    //   message: message,
-    //   colorFont: Colors.white,
-    //   backGround: Colors.red,
-    // ));
   }
 
   @override
@@ -104,16 +70,20 @@ class _PesionInChangeState extends State<PesionInChange> {
               padding: EdgeInsets.all(yd_defauld_padding),
               child: Column(
                 children: controller.modelListPic.value.data != null ? controller.modelListPic.value.data!.pic!.map((data) =>  InkWell(
-                  onTap: ()=>data.roleId != 5 ? Get.to(()=>SearchPIC(
-                    idRole: data.roleId.toString(),
-                    leadId: data.leadId.toString(),
-                    cabangID: controller.cabangPIC.value.id.toString(),
-                    role: data.role.toString(),
-                  ))!.then((value) => controller.getNewPIC(leadID: widget.id, onError: (message)=>rawBottomNotif(
-                    message: message,
-                    colorFont: Colors.white,
-                    backGround: Colors.red,
-                  ))):null,
+                  onTap: (){
+                    if(controller.dataLogin.value.userData!.role == 'Marketing Head'){
+                      data.roleId != 5 ? Get.to(()=>SearchPIC(
+                        idRole: data.roleId.toString(),
+                        leadId: data.leadId.toString(),
+                        cabangID: controller.cabangPIC.value.id.toString(),
+                        role: data.role.toString(),
+                      ))!.then((value) => controller.getNewPIC(leadID: widget.id, onError: (message)=>rawBottomNotif(
+                        message: message,
+                        colorFont: Colors.white,
+                        backGround: Colors.red,
+                      ))):null;
+                    }
+                  },
                   child: cardSellerSearch(
                     name: data.name,
                     alamat: data.role,
@@ -134,121 +104,69 @@ class _PesionInChangeState extends State<PesionInChange> {
               padding: EdgeInsets.symmetric(horizontal: yd_defauld_padding),
               child: Column(
                 children: [
-                  !controller.hasMH.value ? newCard(label: 'Marketing Head', onClick: ()=>Get.to(()=>SearchPIC(
-                    idRole: '5',
-                    leadId: widget.id.toString(),
-                    cabangID: controller.cabangPIC.value.id.toString(),
-                    role: 'Marketing Head',
-                  ))!.then((value) => controller.getNewPIC(leadID: widget.id, onError: (message)=>rawBottomNotif(
-                    message: message,
-                    colorFont: Colors.white,
-                    backGround: Colors.red,
-                  )))):SizedBox(),
-                  !controller.hasCR.value ?newCard(label: 'Customer Relation', onClick: ()=>Get.to(()=>SearchPIC(
-                    idRole: '2',
-                    leadId: widget.id.toString(),
-                    cabangID: controller.cabangPIC.value.id.toString(),
-                    role: 'Customer Relation',
-                  ))!.then((value) => controller.getNewPIC(leadID: widget.id, onError: (message)=>rawBottomNotif(
-                    message: message,
-                    colorFont: Colors.white,
-                    backGround: Colors.red,
-                  )))):SizedBox(),
-                  !controller.hasCO.value ?newCard(label: 'Credit Officer', onClick: ()=>Get.to(()=>SearchPIC(
-                    idRole: '6',
-                    leadId: widget.id.toString(),
-                    cabangID: controller.cabangPIC.value.id.toString(),
-                    role: 'Credit Officer',
-                  ))!.then((value) => controller.getNewPIC(leadID: widget.id, onError: (message)=>rawBottomNotif(
-                    message: message,
-                    colorFont: Colors.white,
-                    backGround: Colors.red,
-                  )))):SizedBox(),
-                  !controller.hasMO.value ?newCard(label: 'Marketing Officer', onClick: ()=>Get.to(()=>SearchPIC(
-                    idRole: '7',
-                    leadId: widget.id.toString(),
-                    cabangID: controller.cabangPIC.value.id.toString(),
-                    role: 'Marketing Officer',
-                  ))!.then((value) => controller.getNewPIC(leadID: widget.id, onError: (message)=>rawBottomNotif(
-                    message: message,
-                    colorFont: Colors.white,
-                    backGround: Colors.red,
-                  )))):SizedBox()
+                  !controller.hasMH.value ? newCard(label: 'Marketing Head',
+                  onClick: (){
+                    if(controller.dataLogin.value.userData!.role == 'Marketing Head'){
+                      Get.to(()=>SearchPIC(
+                        idRole: '5',
+                        leadId: widget.id.toString(),
+                        cabangID: controller.cabangPIC.value.id.toString(),
+                        role: 'Marketing Head',
+                      ))!.then((value) => controller.getNewPIC(leadID: widget.id, onError: (message)=>rawBottomNotif(
+                        message: message,
+                        colorFont: Colors.white,
+                        backGround: Colors.red,
+                      )));
+                    }
+                  }):SizedBox(),
+                  !controller.hasCR.value ?newCard(label: 'Customer Relation', onClick: (){
+                    if(controller.dataLogin.value.userData!.role == 'Marketing Head'){
+                      Get.to(()=>SearchPIC(
+                        idRole: '2',
+                        leadId: widget.id.toString(),
+                        cabangID: controller.cabangPIC.value.id.toString(),
+                        role: 'Customer Relation',
+                      ))!.then((value) => controller.getNewPIC(leadID: widget.id, onError: (message)=>rawBottomNotif(
+                        message: message,
+                        colorFont: Colors.white,
+                        backGround: Colors.red,
+                      )));
+                    }
+                  }):SizedBox(),
+                  !controller.hasCO.value ?newCard(label: 'Credit Officer', onClick: (){
+                    if(controller.dataLogin.value.userData!.role == 'Marketing Head'){
+                      Get.to(()=>SearchPIC(
+                        idRole: '6',
+                        leadId: widget.id.toString(),
+                        cabangID: controller.cabangPIC.value.id.toString(),
+                        role: 'Credit Officer',
+                      ))!.then((value) => controller.getNewPIC(leadID: widget.id, onError: (message)=>rawBottomNotif(
+                        message: message,
+                        colorFont: Colors.white,
+                        backGround: Colors.red,
+                      )));
+                    }
+                  }):SizedBox(),
+                  !controller.hasMO.value ?newCard(label: 'Marketing Officer', onClick: (){
+                    if(controller.dataLogin.value.userData!.role == 'Marketing Head'){
+                      Get.to(()=>SearchPIC(
+                        idRole: '7',
+                        leadId: widget.id.toString(),
+                        cabangID: controller.cabangPIC.value.id.toString(),
+                        role: 'Marketing Officer',
+                      ))!.then((value) => controller.getNewPIC(leadID: widget.id, onError: (message)=>rawBottomNotif(
+                        message: message,
+                        colorFont: Colors.white,
+                        backGround: Colors.red,
+                      )));
+                    }
+                  }):SizedBox()
                 ],
               ),
             )
           ],
         ),
       )),
-    );
-  }
-
-  showDialog(List<PersonModel> data){
-    return showModalBottomSheet(
-      // backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      context: Get.context!,
-      builder: (v) => SizedBox.expand(
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 25, horizontal: 20),
-          child: Column(
-            children: [
-              Container(
-                margin: EdgeInsets.only(top: 20, bottom: 40),
-                child: Row(
-                  children: [
-                    Icon(Icons.arrow_back_rounded),
-                    Expanded(child: Container(
-                      alignment: Alignment.centerRight,
-                      child: Text('Batalkan'),
-                    ))
-                  ],
-                ),
-              ),
-              Text('PIC', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.black87),),
-              SizedBox(height: 30),
-              TextField(
-                // focusNode: _focusEmail,
-                controller: controller.edtSearch,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        borderSide: BorderSide(color: Colors.black87)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        borderSide: BorderSide(color: Colors.black87)),
-                    fillColor: Colors.white,
-                    hintText: 'Cari',
-                    prefixIcon: Icon(Icons.person_search_rounded, color: Colors.black87),
-                    contentPadding: EdgeInsets.only(left: 20)
-                ),
-                onChanged: (val)=> controller.searchPIC(val),
-              ),
-              SizedBox(height: 15),
-              Obx(()=>Expanded(
-                child: Container(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: data.map((element) => InkWell(
-                        onTap: ()=>controller.setPIC(context: context, leadId: element.id.toString(), userId: element.id.toString()),
-                        child: cardSellerSearch(
-                          name: element.name,
-                          alamat: element.role,
-                          imageUrl: element.photo_profile,
-                        ),
-                      )).toList(),
-                    ),
-                  ),
-                ),
-              ))
-            ],
-          ),
-        ),
-      ),
     );
   }
 

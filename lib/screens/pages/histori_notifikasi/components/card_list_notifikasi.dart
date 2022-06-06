@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:yodacentral/components/yd_colors.dart';
 import 'package:yodacentral/components/yd_size.dart';
 import 'package:yodacentral/models/model_dummy_pipeline/model_dummy_pipeline.dart';
+import 'package:yodacentral/models/model_save_root.dart';
+import 'package:yodacentral/save_root/save_root.dart';
 import 'package:yodacentral/screens/chat/chat.dart';
 import 'package:yodacentral/screens/detail_leads/detail_leads.dart';
 
@@ -50,22 +52,24 @@ class _CardListNotifilasiState extends State<CardListNotifilasi> {
       focusColor: yd_Color_Primary_Grey.withOpacity(0.3),
       splashColor: yd_Color_Primary_Grey.withOpacity(0.3),
       highlightColor: yd_Color_Primary_Grey.withOpacity(0.3),
-      onTap: () {
+      onTap: () async {
         if (widget.category == "chat") {
-          Get.to(
-            () => Chat(
-              nameCar: widget.nama_unit!,
-              namePipeline: financing.where((element) => element.id == widget.lead_id!).isEmpty
-                  ? refinancing.where((element) => element.id == widget.lead_id!).first.title
-                  : financing.where((element) => element.id == widget.lead_id!).first.title,
-              pipeline: widget.lead_id!,
-              id_unit: widget.unit_id!,
-              lead_id: widget.lead_id!,
-            ),
-          );
+          ModelSaveRoot value = await SaveRoot.callSaveRoot();
+          if(value.userData!.role == 'Marketing Officer' || value.userData!.role == 'Credit Officer' || value.userData!.role == 'Marketing Head'){
+            Get.to(
+                  () => Chat(
+                nameCar: widget.nama_unit!,
+                namePipeline: financing.where((element) => element.id == widget.lead_id!).isEmpty
+                    ? '' //refinancing.where((element) => element.id == widget.lead_id!).first.title
+                    : '', //financing.where((element) => element.id == widget.lead_id!).first.title,
+                pipeline: widget.lead_id!,
+                id_unit: widget.unit_id!,
+                lead_id: widget.lead_id!,
+              ),
+            );
+          }
+
         } else if (widget.category == "financing") {
-          var sda = widget.lead_id;
-          var dads = financing.where((element) => element.id == widget.lead_id!);
           Get.to(
             () => DetailLeads(
               lead_id: widget.lead_id!,
@@ -124,30 +128,13 @@ class _CardListNotifilasiState extends State<CardListNotifilasi> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(widget.name ?? "-"),
-                  Text(
-                    widget.date!,
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
+                  Text(widget.date!, style: TextStyle(fontSize: 12)),
                 ],
               ),
-              SizedBox(
-                height: 8,
-              ),
-              Text(
-                widget.nama_unit ?? "-",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Text(
-                widget.content!,
-                overflow: TextOverflow.ellipsis,
-              ),
+              SizedBox(height: 8),
+              Text(widget.nama_unit ?? "-", style: TextStyle(fontWeight: FontWeight.bold,)),
+              SizedBox(height: 8),
+              Text(widget.content!, overflow: TextOverflow.ellipsis),
             ],
           ),
         ),

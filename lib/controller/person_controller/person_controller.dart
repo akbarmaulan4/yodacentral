@@ -18,6 +18,7 @@ class PersonController extends GetxController{
   RxList<PersonModel> dataPIC = <PersonModel>[].obs;
   RxList<PersonRoleModel> dataRolePIC = <PersonRoleModel>[].obs;
   Rx<ModelListPic> modelListPic = ModelListPic().obs;
+  Rx<ModelSaveRoot> dataLogin = ModelSaveRoot(ingat: 1).obs;
   Rx<Cabang> cabangPIC = Cabang().obs;
   RxBool dataEmpty = false.obs;
   RxBool hasCO = false.obs;
@@ -35,6 +36,7 @@ class PersonController extends GetxController{
 
   getNewPIC({String? leadID,  Function? onError}) async{
     var data = await SaveRoot.callSaveRoot();
+    dataLogin.value = data;
     var url = Uri.tryParse(ApiUrl.domain.toString() + "/api/lead/pic/${leadID}");
     print('URL ${url}');
     var res = await http.get(url!, headers: {'Authorization': 'Bearer ' + data.token.toString()});

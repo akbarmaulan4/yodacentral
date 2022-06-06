@@ -476,8 +476,6 @@ class _DialogNopolState extends State<DialogNopol> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    // Get.offAll(() => Wraping());
-                    log("lanjut");
                     Get.back();
                     Get.to(() => AddNewLeadFinancing(isFinancing: widget.isFinancing));
                     addLeadFinancing.inputNopol(nopol: widget.nopol);

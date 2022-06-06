@@ -15,12 +15,12 @@ class ControllerSearchSeller extends GetxController {
   RxBool findData = false.obs;
   bool load = true;
   ModelSellerSearch? modelSellerSearch;
-  searchSeller({String? search}) async {
+  searchSeller({String? search}) async { 
     load = true;
     loadData.value = true;
     modelSellerSearch = null;
     ModelSaveRoot value = await SaveRoot.callSaveRoot();
-    var url = '${ApiUrl.domain.toString()}/api/v1/penjual?perpage=0&search=${search!}';
+    var url = '${ApiUrl.domain.toString()}/api/v1/penjual?perpage=10&search=${search!}';
     log(url.toString());
     var res = await http.get(Uri.parse(url.trim()), headers: {'Authorization': 'Bearer ' + value.token.toString()});
     if (res.statusCode == 200) {

@@ -16,6 +16,7 @@ import 'package:yodacentral/models/model_save_root.dart';
 import 'package:yodacentral/save_root/save_root.dart';
 import 'package:yodacentral/screens/login/data_diri.dart/data_diri.dart';
 import 'package:yodacentral/screens/login/email_send.dart/email_send.dart';
+import 'package:yodacentral/utils/utils.dart';
 
 class ControllerAuth extends GetxController {
   RxInt infoUnit = 0.obs;
@@ -37,9 +38,7 @@ class ControllerAuth extends GetxController {
     if (res.statusCode == 200) {
       var jsonDecode = json.decode(res.body);
       var dataJson = jsonDecode as Map<String, dynamic>;
-      // var data = ModelListPic.fromMap(dataJson);
-      // modelListPic.value = data;
-      // modelListPic = modelListPicFromMap(res.body) as Rx<ModelListPic>;
+      var das = jsonEncode(dataJson);
       infoUnit.value  = dataJson['access']['mobile_access']['Info Unit (Informasi lead)'];
       infoNasabah.value = dataJson['access']['mobile_access']['Info Nasabah (Informasi lead)'];
       infoKredit.value = dataJson['access']['mobile_access']['Info Kredit (Informasi lead)'];
@@ -50,7 +49,8 @@ class ControllerAuth extends GetxController {
       if(infoNasabah.value > 0){
         data.add('Nasabah');
       }
-      if(infoKredit.value > 0){
+
+      if(infoKredit.value > 0 && value.userData!.role != 'External'){
         data.add('Kredit');
       }
       menuLeads.value = data;
@@ -201,6 +201,29 @@ class ControllerAuth extends GetxController {
 
     // modelSaveRoot = null;
     update();
+  }
+
+  postPlayerID(String playerid) async {
+    ModelSaveRoot value = await SaveRoot.callSaveRoot();
+    String strUrl = '${ApiUrl.domain.toString()}${ApiUrl.postPlayerID.toString()}';
+    print('URL : $strUrl');
+    print('ID : $playerid');
+    print('TOKEN : ${value.token.toString()}');
+    var res = await  http.post(
+      Uri.parse(strUrl.trim()),
+      body: {
+        "player_id": playerid
+      },
+      headers: {
+        'Authorization': 'Bearer ' + value.token.toString(),
+      }
+    );
+
+    if (res.statusCode == 200) {
+      var jsonDecode = json.decode(res.body);
+      var dataJson = jsonDecode as Map<String, dynamic>;
+      Utils.savePlayerID(true);
+    }
   }
 }
 

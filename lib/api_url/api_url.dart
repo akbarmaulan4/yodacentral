@@ -1,5 +1,7 @@
 class ApiUrl {
-  static String domain = 'https://yodacentral.digizone.id'; //"https://yoda-central-app.herokuapp.com";
+  static String domain = 'https://yodacentral.digizone.id';
+  static String domainCal = 'https://credit.yodacentral.digizone.id';
+  //"https://yoda-central-app.herokuapp.com";
   // "https://ce1d-36-91-58-207.ngrok.io";
 
   //////daftar--masuk
@@ -92,4 +94,23 @@ class ApiUrl {
   static String homeAccess = "/api/home_access";
   static String uploadDocKontrak = "/api/lead/kredit/edit_document/kontrak";
   static String uploadDocJaminan= "/api/lead/kredit/edit_document/jaminan";
+
+  static String postPlayerID= "/api/admin/notification";
+  static String wilayah = "/api/list/wilayah";
+  static String kondisiMobil = "/api/list/kondisi-mobil";
+  static String merekMobil = "/api/list/merk-mobil";
+  static String model_mobil = "/api/list/model-mobil/";
+  static String varianMobil = "/api/list/variant-mobil/";
+  static String kategoriMobil = "/api/list/kategori-mobil";
+  static String tahunMobil = "/api/list/range-tahun";
+  static String statusAsuransi = "/api/list/status-asuransi";
+  static String loanType = "/api/list/loan-type";
+  static String tenorCal = "/api/list/tenor";
+  static String jeniseMobil = "/api/list/jenis-mobil";
+  static String tipeAsuransi = "/api/list/tipe-asuransi";
+  static String tujuanPenggunaan = "/api/list/tujuan-kegunaan";
+  static String valueOTRDefault = "/api/list/otr-default";
+  static String calculateOTRDefault = "/api/credit-calculator/otr-default";
+  static String calculateOTREntry = "/api/credit-calculator/otr-entry";
+  static String calculateRefund = "/api/credit-calculator/total-refund";
 }

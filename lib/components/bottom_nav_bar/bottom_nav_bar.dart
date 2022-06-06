@@ -57,11 +57,33 @@ class _BottomNavBarState extends State<BottomNavBar> {
                             ? Color(0XFFD9EDE9)
                             : Colors.transparent,
                       ),
-                      child: Icon(
-                        widget.items[i].icon,
-                        color: widget.index == i
-                            ? Color(0XFF78BFB1)
-                            : Colors.white,
+                      // child: Icon(widget.items[i].icon, color: widget.index == i ? Color(0XFF78BFB1) : Colors.white),
+                      child: Center(
+                        child: Stack(
+                          children: [
+                            Icon(widget.items[i].icon, color: widget.index == i ? Color(0XFF78BFB1) : Colors.white, size: 30,),
+                            widget.items[i].showNotif! ? Positioned(
+                              right: 0,
+                              child: Container(
+                                padding: EdgeInsets.all(7),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                // child: Center(
+                                //   child: Text(
+                                //     '1',
+                                //     style: TextStyle(
+                                //       color: Colors.white,
+                                //       fontSize: 8,
+                                //     ),
+                                //     textAlign: TextAlign.center,
+                                //   ),
+                                // ),
+                              ),
+                            ):SizedBox()
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -95,7 +117,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
 }
 
 class BottomNavItem {
-  BottomNavItem({required this.icon, this.label});
+  BottomNavItem({required this.icon, this.label, this.showNotif});
   String? label;
   IconData icon;
+  bool? showNotif;
 }

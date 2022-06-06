@@ -21,6 +21,8 @@ import 'package:yodacentral/screens/add_new_lead/add_new_lead_financing/componen
 import 'package:yodacentral/screens/detail_leads/components/nasabah/widget/dynamic_foto.dart';
 import 'package:yodacentral/screens/detail_leads/edit_leads/edit_foto_unit/edit_foto_unit.dart';
 import 'package:yodacentral/screens/detail_leads/edit_leads/edit_foto_unit/square_image_old.dart';
+import 'package:yodacentral/utils/debouncher.dart';
+import 'package:yodacentral/utils/utils.dart';
 
 class EditKontrakKredit extends StatefulWidget {
 
@@ -46,6 +48,8 @@ class _EditKontrakKreditState extends State<EditKontrakKredit> {
   // FocusNode bungaFlatFocus = FocusNode();
   // FocusNode bungaEfectifFocus = FocusNode();
   // FocusNode premiFocus = FocusNode();
+
+  var debouncher = new Debouncer(milliseconds: 500);
 
   @override
   void initState() {
@@ -94,7 +98,18 @@ class _EditKontrakKreditState extends State<EditKontrakKredit> {
                   node: controller.focusNoKontrak,
                   focused: controller.noKontrakFocus.value,
                   controller: controller.edtNoKontrak, type: TextInputType.number,
-                  onChange: (val)=>controller.setEnableKontrak()),
+                  errorMessag: controller.msgErrorNoKontrak.value,
+                  onChange: (val){
+                    debouncher.run(() {
+                      // controller.setEnableKontrak();
+                      if(Utils.clearTextfield(widget.data!.data!.biaya!.noKontrak!) != controller.edtNoKontrak.text){
+                        controller.checkNoKontrak(context, controller.edtNoKontrak.text, widget.lead_id!.toString());
+                      }else{
+                        controller.msgErrorNoKontrak.value = '';
+                      }
+                    });
+
+                  }),
               SizedBox(height: 15),
               Text('Kredit'),
               SizedBox(height: 15),
@@ -482,47 +497,6 @@ class _EditKontrakKreditState extends State<EditKontrakKredit> {
     );
   }
 
-  // noImage(bool isDoc){
-  //   return GestureDetector(
-  //     onTap: () {
-  //       if(isDoc){
-  //         imageAwal.length >= 15
-  //             ? log("penuh")
-  //             : showDialog(
-  //           context: context,
-  //           builder: (context) => dialogImage(),
-  //           barrierColor: Colors.white.withOpacity(0.4),
-  //         );
-  //       }else{
-  //         showDialog(
-  //           context: context,
-  //           builder: (context) => dialogImage(),
-  //           barrierColor: Colors.white.withOpacity(0.4),
-  //         );
-  //       }
-  //
-  //     },
-  //     child: Container(
-  //       width: Get.width / 2.4,
-  //       height: Get.width / 2.4,
-  //       decoration: BoxDecoration(
-  //         color: yd_Color_Primary_Grey.withOpacity(0.3),
-  //         borderRadius: BorderRadius.circular(7),
-  //       ),
-  //       child: Column(
-  //         mainAxisAlignment: MainAxisAlignment.center,
-  //         children: [
-  //           Icon(
-  //             Icons.attach_file_rounded,
-  //             size: Get.width / 7,
-  //           ),
-  //           // Text(controller.listImages.value.length.toString() + "/" + "15"),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget itemEdit({required File image, required int index}) {
     return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
@@ -591,24 +565,6 @@ class _EditKontrakKreditState extends State<EditKontrakKredit> {
                   ),
                 ),
               ),
-              // TextButton(
-              //   style: TextButton.styleFrom(primary: yd_Color_Primary,),
-              //   onPressed: () {
-              //     Utils.messageDialog(context, 'Informasi', 'Apakah anda mau menjadikan ini sebgai Cover?', () {
-              //       simpanImage(index!);
-              //     });
-              //   },
-              //   child: Padding(
-              //     padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-              //     child: Row(
-              //       children: [
-              //         Icon(Icons.photo_album, color: Colors.black),
-              //         SizedBox(width: yd_defauld_padding,),
-              //         Text("Jadikan Cover", style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "RR", color: Colors.black,)),
-              //       ],
-              //     ),
-              //   ),
-              // ),
             ],
           ),
           Divider(height: 0),
@@ -803,7 +759,7 @@ class _EditKontrakKreditState extends State<EditKontrakKredit> {
     if (!isImageEditAwal) {
       if (index != null) {
         XFile? xFile = await _picker.pickImage(
-            source: ImageSource.gallery, imageQuality: 100);
+            source: ImageSource.gallery, imageQuality: 30);
         if (index == null) {
           if (xFile == null) {
             log("null");
@@ -818,7 +774,7 @@ class _EditKontrakKreditState extends State<EditKontrakKredit> {
           });
         }
       } else {
-        List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 100);
+        List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 30);
         if (mul!.length == 0) {
           log("kosong", name: "ini edit foto unit");
         } else {
@@ -840,7 +796,7 @@ class _EditKontrakKreditState extends State<EditKontrakKredit> {
         }
       }
     } else {
-      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 100);
+      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 30);
       log("ini edit image awal");
       setState(() {
         imageFile!(File(xFile!.path));
@@ -852,7 +808,7 @@ class _EditKontrakKreditState extends State<EditKontrakKredit> {
     Get.back();
     XFile? xFile = await _picker.pickImage(
       source: ImageSource.camera,
-      imageQuality: 100,
+      imageQuality: 30,
     );
     if (!isImageEditAwal) {
       if (index == null) {
@@ -883,11 +839,13 @@ class _EditKontrakKreditState extends State<EditKontrakKredit> {
     TextInputType? type,
     Function? onChange,
     FocusNode? node,
+    bool enable = true,
     bool focused = false,
+    String? errorMessag,
   }){
     return  Container(
       margin: EdgeInsets.only(bottom: 10),
-      child: TextField(
+      child: TextFormField(
         focusNode: node,
         inputFormatters:(label!.contains('Bunga') || label.contains('Premi')) ? [
           LengthLimitingTextInputFormatter(3),
@@ -895,6 +853,7 @@ class _EditKontrakKreditState extends State<EditKontrakKredit> {
         controller: controller,
         keyboardType: type,
         onChanged: (val) => onChange!(val),
+        enabled: enable,
         decoration: InputDecoration(
           border: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -906,6 +865,7 @@ class _EditKontrakKreditState extends State<EditKontrakKredit> {
             borderSide: BorderSide(color: yd_Color_Primary_Grey, width: 1),
             borderRadius: BorderRadius.circular(4),
           ),
+          errorText: errorMessag != '' ? errorMessag : null,
           fillColor: Colors.white,
           hintText: label,
           labelText: label,

@@ -188,6 +188,7 @@ class ControllerAddLeadFinancing extends GetxController {
       };
       var request = http.MultipartRequest(
           'POST', Uri.parse('${ApiUrl.domain.toString()}/api/lead'));
+      print('URL ${ApiUrl.domain.toString()}/api/lead');
       if (sellerBaru == true) {
         request.fields.addAll({
           'police_number': nomorPolisi1.toString(),
@@ -242,7 +243,7 @@ class ControllerAddLeadFinancing extends GetxController {
 
       request.headers.addAll(headers);
       log(request.headers.toString(), name: "ini auth");
-      log(request.fields.toString(), name: "ini data");
+      log(jsonEncode(request.fields.toString()), name: "ini data");
       log("ini upload");
       http.StreamedResponse response = await request.send();
 
@@ -269,6 +270,7 @@ class ControllerAddLeadFinancing extends GetxController {
         );
         // update();
       } else {
+        if (Get.isBottomSheetOpen == true) Get.back();
         log(await response.stream.bytesToString());
         if (Get.isBottomSheetOpen == true) Get.back();
         rawBottomNotif(

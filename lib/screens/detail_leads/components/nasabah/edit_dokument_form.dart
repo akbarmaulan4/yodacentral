@@ -40,7 +40,7 @@ class _EditDokumentFormState extends State<EditDokumentForm> with AutomaticKeepA
   getImageGalleryNasabah({int? index}) async {
     Get.back();
     if (index != null) {
-      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 100);
+      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 30);
       if (xFile != null) {
         controller.setEnableButtonFoto(xFile.path);
         setState(() {
@@ -48,7 +48,7 @@ class _EditDokumentFormState extends State<EditDokumentForm> with AutomaticKeepA
         });
       }
     } else {
-      List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 100);
+      List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 30);
       if (mul!.length == 0) {
         log("kosong", name: "ini unggah foto");
       } else {
@@ -74,7 +74,7 @@ class _EditDokumentFormState extends State<EditDokumentForm> with AutomaticKeepA
   getImageCameraNasabah({int? index}) async {
     Get.back();
     XFile? xFile =
-    await _picker.pickImage(source: ImageSource.camera, imageQuality: 100);
+    await _picker.pickImage(source: ImageSource.camera, imageQuality: 30);
     if (index != null) {
       if (xFile != null) {
         controller.setEnableButtonFoto(xFile.path);
@@ -93,7 +93,7 @@ class _EditDokumentFormState extends State<EditDokumentForm> with AutomaticKeepA
     Get.back();
     if (!isImageEditAwal) {
       if (index != null) {
-        XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 100);
+        XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 30);
         if (index == null) {
           if (xFile == null) {
             log("null");
@@ -108,7 +108,7 @@ class _EditDokumentFormState extends State<EditDokumentForm> with AutomaticKeepA
           });
         }
       } else {
-        List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 100);
+        List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 30);
         if (mul!.length == 0) {
           log("kosong", name: "ini edit foto unit");
         } else {
@@ -120,7 +120,7 @@ class _EditDokumentFormState extends State<EditDokumentForm> with AutomaticKeepA
         }
       }
     } else {
-      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 100);
+      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 30);
       log("ini edit image awal");
       setState(() {
         imageFile!(File(xFile!.path));
@@ -132,7 +132,7 @@ class _EditDokumentFormState extends State<EditDokumentForm> with AutomaticKeepA
     Get.back();
     XFile? xFile = await _picker.pickImage(
       source: ImageSource.camera,
-      imageQuality: 100,
+      imageQuality: 30,
     );
     if (!isImageEditAwal) {
       if (index == null) {

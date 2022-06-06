@@ -1,6 +1,8 @@
 part 'mobile_access.g.dart';
 class MobileAccess{
   MobileAccess(){}
+  int infoUnit = 0;
+  int infoNasabah = 0;
   int tambahUnit = 0;
   int home = 0;
   int notifikasi = 0;

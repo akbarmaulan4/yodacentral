@@ -622,7 +622,7 @@ class _EditJaminanKreditState extends State<EditJaminanKredit> {
     if (!isImageEditAwal) {
       if (index != null) {
         XFile? xFile = await _picker.pickImage(
-            source: ImageSource.gallery, imageQuality: 100);
+            source: ImageSource.gallery, imageQuality: 30);
         if (index == null) {
           if (xFile == null) {
             log("null");
@@ -637,7 +637,7 @@ class _EditJaminanKreditState extends State<EditJaminanKredit> {
           });
         }
       } else {
-        List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 100);
+        List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 30);
         if (mul!.length == 0) {
           log("kosong", name: "ini edit foto unit");
         } else {
@@ -659,7 +659,7 @@ class _EditJaminanKreditState extends State<EditJaminanKredit> {
         }
       }
     } else {
-      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 100);
+      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 30);
       log("ini edit image awal");
       setState(() {
         imageFile!(File(xFile!.path));
@@ -671,7 +671,7 @@ class _EditJaminanKreditState extends State<EditJaminanKredit> {
     Get.back();
     XFile? xFile = await _picker.pickImage(
       source: ImageSource.camera,
-      imageQuality: 100,
+      imageQuality: 30,
     );
     if (!isImageEditAwal) {
       if (index == null) {

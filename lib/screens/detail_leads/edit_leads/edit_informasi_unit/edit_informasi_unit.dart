@@ -92,7 +92,6 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
     log(catatan.text, name: "ini note");
     SaveRoot.callSaveRoot().then((value) async {
       modalLoad();
-      // var url = Uri.tryParse(ApiUrl.domain.toString() + "/api/lead/unit/edit/" + widget.id_unit.toString());
       var url = '${ApiUrl.domain.toString()}/api/lead/unit/edit/${widget.id_unit.toString()}';
       print('URL : ${url}');
       var body = {
@@ -103,16 +102,13 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
         'fuel_id': selectedBahanBakar!.id.toString(),
         'transmission_id': selectedTransmisi!.id.toString(),
         'color_id': selectedWarna!.id.toString(),
-        // 'type_body_id': selectedModel!.id.toString(),
         'intended_use_id': '4',
-        // 'car_category_id': selectedmerek!.id.toString(),
         'note': catatan.text.isEmpty || catatan.text.length <= 0
             ? "-"
             : catatan.text,
         'price': harga.text.replaceAll(",", ""),
         'year': selectedTahun!.name.toString(),
         'kecamatan_id': seledtedKec!.id.toString(),
-        // 'seller_id': modelDetailEditUnit.data.pe,
         '_method': 'put'
       };
       var res = await http.post(Uri.parse(url), headers: {
@@ -177,7 +173,6 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
             setState(() {
               modelDetailEditUnit = modelDetailEditUnitFromMap(res.body);
               var a = modelDetailEditUnit!.data!;
-              // aa = modelDetailEditUnit!.data!;
               nopol.text = a.numberPolice!;
               selectedKondisi = Datum(id: a.kondisi!.id, name: a.kondisi!.value);
               ckondisi.text = a.kondisi!.value!;
@@ -227,34 +222,12 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
 
   bool isComplete = false;
   setComplete(){
-    var kondisi = selectedKondisi;
-    var merek = selectedmerek;
-    var mdoel = selectedModel;
-    var varian =selectedVarian;
-    var tahun =selectedTahun;
-    var jrak =selectedJarakTempuh;
-    var bakar =selectedBahanBakar;
-    var transimis =selectedTransmisi;
-    var warna =selectedWarna;
-    var hargasa = harga.text.length;
-    var prov =seledtedProv;
-    var kota =seledtedKotaKab;
-    var kec =seledtedKec;
-    var provname =seledtedProv!.name;
-    var kotaname =seledtedKotaKab!.name;
-    var kecname =seledtedKec!.name;
-    var kondisiname =selectedKondisi!.name;
-    var merekname =selectedmerek!.name;
-    var modelname =selectedModel!.name;
-    var varianname =selectedVarian!.name;
-    var jarakname =selectedJarakTempuh!.name;
-    var bakarname =selectedBahanBakar!.name;
-    var transisiname =selectedTransmisi!.name;
-    var warnaname =selectedWarna!.name;
-    var tahunname =selectedTahun!.name;
-    var benarsad =!benar;
-    var tambah =!bisaTambah;
-    var peasn =message;
+    if(isFirstLaunch){
+      setState(() {
+        isComplete = false;
+      });
+      return;
+    }
     if(nopol.text.length <= 0 || message != null ||
         selectedKondisi == null ||
         selectedmerek == null ||
@@ -308,6 +281,7 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
     required TextEditingController controller,
     TextInputType? type,
     String? messageApi,
+    bool? enable = true
   }) {
     return TextFormField(
       inputFormatters: label == "Catatan"
@@ -329,12 +303,14 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: (v) {},
       controller: controller,
+      enabled: enable,
       onChanged: (v) {
         onChanged(v);
-        // if (label == "Nomor Polisi") {
-        //   ceking(s: v);
-        //   log(nopol.text);
-        // }
+        if(isFirstLaunch){
+          setState(() {
+            isFirstLaunch = false;
+          });
+        }
       },
       focusNode: focusNode,
       keyboardType: type,
@@ -454,8 +430,6 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
         message = null;
         ceking(s: strNopol);
       });
-      // FocusScope.of(context).requestFocus(new FocusNode());
-      // ceking(s: strNopol);
     }else{
       setState(() {
         benar = false;
@@ -472,6 +446,7 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
     Datum? value,
     required String label,
     required TextEditingController controller,
+    bool enable = true
   }) {
     bool foc = false;
     return Focus(
@@ -491,9 +466,16 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
         hideSuggestionsOnKeyboardHide: true,
         textFieldConfiguration: TextFieldConfiguration(
           onChanged: (v) {
-            setState(() {});
+            if(isFirstLaunch){
+              setState(() {
+                isFirstLaunch = false;
+              });
+            }else{
+              setState(() {});
+            }
           },
           controller: controller,
+          enabled: enable,
           decoration: InputDecoration(
             suffixIcon: Icon(
               Icons.arrow_drop_down_rounded,
@@ -737,9 +719,11 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
       ),
   ];
 
+  bool isFirstLaunch = true;
   @override
   void initState() {
     super.initState();
+    checkAccess();
     controllerWilayah.getProv();
     controllerWilayah.getKondisi();
     controllerWilayah.getMerek();
@@ -751,7 +735,19 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
     getDetailInfoUnit();
     benar = true;
     bisaTambah = true;
-    // log(nopol.text);
+    if(mounted){
+      isComplete = false;
+    }
+  }
+
+  bool viewOnly = false;
+  checkAccess() async {
+    ModelSaveRoot value = await SaveRoot.callSaveRoot();
+    if(value.userData!.role == 'Marketing Head' || value.userData!.role == 'Eksternal'){
+      setState(() {
+        viewOnly = true;
+      });
+    }
   }
 
   @override
@@ -787,20 +783,8 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    widget.namePipeline,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Text(
-                    "#" + widget.lead_id.toString(),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.black,
-                    ),
-                  ),
+                  Text(widget.namePipeline, style: TextStyle(color: Colors.black, fontSize: 16,)),
+                  Text("#" + widget.lead_id.toString(), style: TextStyle(fontSize: 12, color: Colors.black,)),
                 ],
               ),
             )
@@ -812,32 +796,16 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
             child: load
                 ? widgetLoadPrimary()
                 : Column(children: [
-                    SizedBox(
-                      height: 30,
-                    ),
+                    SizedBox(height: 30,),
                     Center(
-                      child: Text(
-                        "Edit Informasi Unit",
-                        style: TextStyle(
-                          fontSize: 22,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                      child: Text("Edit Informasi Unit", style: TextStyle(fontSize: 22,), textAlign: TextAlign.center),
                     ),
-                    SizedBox(
-                      height: 30,
-                    ),
+                    SizedBox(height: 30),
                     Column(
                       children: [
                         Align(
                           alignment: Alignment.bottomLeft,
-                          child: Text(
-                            "Spesifikasi unit",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: yd_Color_Primary_Grey,
-                            ),
-                          ),
+                          child: Text("Spesifikasi unit", style: TextStyle(fontSize: 12, color: yd_Color_Primary_Grey,)),
                         ),
                         SizedBox(height: 15,),
                         textFieldLogin(
@@ -849,25 +817,24 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
                           controller: nopol,
                           type: TextInputType.text,
                           messageApi: message,
+                          enable: viewOnly ? false:true
                         ),
-                        SizedBox(
-                          height: yd_defauld_padding,
-                        ),
+                        SizedBox(height: yd_defauld_padding),
                         ttt(
                           controller: ckondisi,
                           items: v.loadKondisi ? [] : v.kondisi!.data!,
                           value: selectedKondisi,
                           label: v.loadKondisi ? "Memuat..." : "Kondisi Mobil",
+                          enable: viewOnly ? false:true
                         ),
-
-                        SizedBox(
-                          height: yd_defauld_padding,
-                        ),
+                        SizedBox(height: yd_defauld_padding),
                         ttt(
                             label: v.loadMerek ? "Memuat..." : "Merek",
                             value: selectedmerek,
                             controller: cmerek,
-                            items: v.loadMerek? []: v.merek == null? []: v.merek!.data!),
+                            items: v.loadMerek? []: v.merek == null? []: v.merek!.data!,
+                            enable: viewOnly ? false:true
+                        ),
 
                         SizedBox(height: yd_defauld_padding),
                         ttt(
@@ -875,6 +842,7 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
                           items: v.loadModel? []: v.model == null? []: v.model!.data!,
                           value: selectedModel,
                           label: v.loadModel ? "Memuat..." : "Model",
+                          enable: viewOnly ? false:true
                         ),
                         SizedBox(height: yd_defauld_padding),
                         ttt(
@@ -882,6 +850,7 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
                           items: v.loadVarian? []: v.varian == null? []: v.varian!.data!,
                           value: selectedVarian,
                           label: v.loadVarian ? "Memuat..." : "Varian",
+                          enable: viewOnly ? false:true
                         ),
                         SizedBox(height: yd_defauld_padding,),
                         ttt(
@@ -889,6 +858,7 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
                           items: listTahun,
                           value: selectedTahun,
                           label: "Tahun",
+                          enable: viewOnly ? false:true
                         ),
                         SizedBox(height: yd_defauld_padding,),
                         ttt(
@@ -896,6 +866,7 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
                           items: v.loadJarakTempuh ? [] : v.jarakTempuh!.data!,
                           value: selectedJarakTempuh,
                           label: v.loadJarakTempuh ? "Memuat..." : "Jarak Tempuh",
+                          enable: viewOnly ? false:true
                         ),
                         SizedBox(height: yd_defauld_padding,),
                         ttt(
@@ -903,6 +874,7 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
                           items: v.loadBahanBakar ? [] : v.bahanBakar!.data!,
                           value: selectedBahanBakar,
                           label: v.loadBahanBakar ? "Memuat..." : "Bahan Bakar",
+                          enable: viewOnly ? false:true
                         ),
                         SizedBox(height: yd_defauld_padding),
                         ttt(
@@ -910,6 +882,7 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
                           items: v.loadTransmisi ? [] : v.transmisi!.data!,
                           value: selectedTransmisi,
                           label: v.loadTransmisi ? "Memuat..." : "Transmisi",
+                          enable: viewOnly ? false:true
                         ),
                         SizedBox(height: yd_defauld_padding),
                         ttt(
@@ -917,6 +890,7 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
                           items: v.loadWarna ? [] : v.warna!.data!,
                           value: selectedWarna,
                           label: v.loadWarna ? "Memuat..." : "Warna",
+                          enable: viewOnly ? false:true
                         ),
                         SizedBox(height: yd_defauld_padding,),
                         textFieldLogin(
@@ -936,9 +910,7 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 30,
-                    ),
+                    SizedBox(height: 30),
                     Column(children: [
                       Align(
                         alignment: Alignment.bottomLeft,
@@ -950,6 +922,7 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
                         items: v.loadProv? []: v.prov == null? []: v.prov!.data!,
                         value: seledtedProv,
                         label: v.loadProv ? "Memuat..." : "Provinsi",
+                        enable: viewOnly ? false:true
                       ),
                       SizedBox(height: yd_defauld_padding,),
                       ttt(
@@ -957,6 +930,7 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
                         items: v.loadKota? []: v.kota == null? []: v.kota!.data!,
                         value: seledtedKotaKab,
                         label: v.loadKota ? "Memuat..." : "Kota/Kabupaten",
+                        enable: viewOnly ? false:true
                       ),
                       SizedBox(height: yd_defauld_padding,),
                       ttt(
@@ -964,6 +938,7 @@ class _EditInformasiUnitState extends State<EditInformasiUnit> {
                         items: v.loadKec? []: v.kec == null? []: v.kec!.data!,
                         value: seledtedKec,
                         label: v.loadKec ? "Memuat..." : "Kecamatan",
+                        enable: viewOnly ? false:true
                       ),
                       SizedBox(height: yd_defauld_padding,),
                     ]),

@@ -544,7 +544,7 @@ class _JaminanViewState extends State<JaminanView> {
   getImageGallery({int? index}) async {
     Get.back();
     if (index != null) {
-      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 100);
+      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 30);
       if (index == null) {
         if (xFile == null) {
           log("null");
@@ -559,7 +559,7 @@ class _JaminanViewState extends State<JaminanView> {
         });
       }
     } else {
-      List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 100);
+      List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 30);
       if (mul!.length == 0) {
         log("kosong", name: "ini unggah foto");
       } else {
@@ -587,7 +587,7 @@ class _JaminanViewState extends State<JaminanView> {
     Get.back();
     XFile? xFile = await _picker.pickImage(
       source: ImageSource.camera,
-      imageQuality: 100,
+      imageQuality: 30,
     );
     if (index == null) {
       if (xFile == null) {

@@ -12,8 +12,8 @@ import 'package:http/http.dart' as http;
 class UnitController extends GetxController{
   RxInt idPipeline = 0.obs;
   RxString titlePipeline = ''.obs;
-  RxList<PipelineModel> dataOpen = <PipelineModel>[].obs;
-  RxList<PipelineModel> dataClose = <PipelineModel>[].obs;
+  // RxList<PipelineModel?> dataOpen = <PipelineModel>[].obs;
+  // RxList<PipelineModel?> dataClose = <PipelineModel>[].obs;
 
   changeIdPipeline(int val, String title){
     idPipeline.value = val;
@@ -34,8 +34,8 @@ class UnitController extends GetxController{
       if(open != null){
         Map map = Map();
         map.addAll({'open':open, 'close':close});
-        dataOpen.value = open as List<PipelineModel>;
-        dataClose.value = close as List<PipelineModel>;
+        // dataOpen.value = open;
+        // dataClose.value = close;
         onSuccess!(map);
       }
       print('RESPONSE ${json.encode(jsonDecode)}');

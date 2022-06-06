@@ -122,7 +122,7 @@ class _FormPekerjaanState extends State<FormPekerjaan>
     // TODO: implement initState
     super.initState();
     controller.initFocusPekerjaan();
-    controller.setEnableButtonKerjaan();
+    // controller.setEnableButtonKerjaan();
   }
 
   @override

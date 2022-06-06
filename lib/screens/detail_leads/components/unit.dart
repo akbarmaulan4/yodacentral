@@ -113,7 +113,7 @@ class _UnitState extends State<Unit> {
     super.initState();
     getUnitDetail();
     controller.changeIdPipeline(widget.idPipeline, widget.namePipeline);
-    // log(widget.unit_id.toString());
+
   }
 
   @override
@@ -254,29 +254,7 @@ class _UnitState extends State<Unit> {
                 Get.dialog(
                   GestureDetector(
                     onTap: ()=>Get.back(),
-                    child: auth.modelSaveRoot!.userData!.role == "External"
-                    ? BottomSheetMenuCustom(
-                      items: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(15, 7.5, 30, 7.5),
-                          child: Text("Menu", style: TextStyle(fontSize: 12,),),
-                        ),
-                        ItemBottomSheetMenuCustom(
-                          icon: Icon(
-                            Icons.phone,
-                            color: Colors.black,
-                          ),
-                          onTap: () {
-                            Get.back();
-                            openwhatsapp(
-                              nomerTlp: modelLeadDetailUnit!.data!.kontak_pic == null ? "+6282140111456"
-                                  : modelLeadDetailUnit!.data!.kontak_pic!.telp!.removeAllWhitespace,
-                            );
-                          },
-                          text: "Hubungi PIC",
-                        ),
-                      ]) :
-                    BottomSheetMenuCustom(
+                    child: BottomSheetMenuCustom(
                       items: [
                         Padding(
                           padding: EdgeInsets.fromLTRB(15, 7.5, 30, 7.5),
@@ -353,7 +331,21 @@ class _UnitState extends State<Unit> {
                           padding: EdgeInsets.fromLTRB(15, 7.5, 30, 7.5),
                           child: Text("Menu", style: TextStyle(fontSize: 12,),),
                         ),
-                        ItemBottomSheetMenuCustom(
+                        modelLogin != null && modelLogin.userData!.role == 'External' ? ItemBottomSheetMenuCustom(
+                          icon: Icon(
+                            Icons.phone,
+                            color: Colors.black,
+                          ),
+                          onTap: () {
+                            Get.back();
+                            openwhatsapp(
+                              nomerTlp: modelLeadDetailUnit!.data!.kontak_pic == null ? "+6282140111456"
+                                  : modelLeadDetailUnit!.data!.kontak_pic!.telp!.removeAllWhitespace,
+                            );
+                          },
+                          text: "Hubungi PIC",
+                        ):SizedBox(),
+                        modelLogin != null && modelLogin.userData!.role != 'External' ? ItemBottomSheetMenuCustom(
                           icon: Icon(
                             Icons.phone,
                             color: Colors.black,
@@ -366,8 +358,8 @@ class _UnitState extends State<Unit> {
                             );
                           },
                           text: "Hubungi Seller",
-                        ),
-                        ItemBottomSheetMenuCustom(
+                        ):SizedBox(),
+                        modelLogin != null && modelLogin.userData!.role != 'External' ? ItemBottomSheetMenuCustom(
                           icon: Icon(
                             Icons.chat_rounded,
                             color: Colors.black,
@@ -375,17 +367,17 @@ class _UnitState extends State<Unit> {
                           onTap: () {
                             Get.back();
                             Get.to(() => Chat(
-                                nameCar: modelLeadDetailUnit!.data!.dataUnit!.name!,
-                                namePipeline: widget.namePipeline,
-                                pipeline: widget.idPipeline,
-                                id_unit: widget.unit_id,
-                                lead_id: widget.lead_id,
-                              ),
+                              nameCar: modelLeadDetailUnit!.data!.dataUnit!.name!,
+                              namePipeline: widget.namePipeline,
+                              pipeline: widget.idPipeline,
+                              id_unit: widget.unit_id,
+                              lead_id: widget.lead_id,
+                            ),
                             );
                           },
                           text: "Chat & Aktifitas",
-                        ),
-                        modelLogin != null && modelLogin.userData!.role == 'Marketing Head'? ItemBottomSheetMenuCustom(
+                        ):SizedBox(),
+                        modelLogin != null && modelLogin.userData!.role != 'External' ? ItemBottomSheetMenuCustom(
                           icon: Icon(
                             Icons.group,
                             color: Colors.black,
@@ -406,9 +398,10 @@ class _UnitState extends State<Unit> {
                             controller.getPipeline(path: widget.isFinancing ? 'Financing':'Refinancing', onSuccess: (data){
                               Get.back();
                               gantiPipline(
-                                  data,
-                                  controller.idPipeline.value,
-                                  (val)=>widget.onUpdate(val)
+                                data,
+                                controller.idPipeline.value,
+                                modelLogin.userData!.role == 'External'?true :false,
+                                (val)=>widget.onUpdate(val)
                               );
                             });
                           },
@@ -416,6 +409,50 @@ class _UnitState extends State<Unit> {
                         ),
                       ],
                     ),
+                    // child: auth.modelSaveRoot!.userData!.role == "External"
+                    // ? BottomSheetMenuCustom(
+                    //   items: [
+                    //     Padding(
+                    //       padding: EdgeInsets.fromLTRB(15, 7.5, 30, 7.5),
+                    //       child: Text("Menu", style: TextStyle(fontSize: 12,),),
+                    //     ),
+                    //     ItemBottomSheetMenuCustom(
+                    //       icon: Icon(
+                    //         Icons.directions_car_rounded,
+                    //         color: Colors.black,
+                    //       ),
+                    //       onTap: () {
+                    //         Get.back();
+                    //         Navigator.push(context,
+                    //           MaterialPageRoute<void>(
+                    //             builder: (BuildContext context) =>
+                    //                 EditInformasiUnit(
+                    //                     namePipeline: widget.namePipeline,
+                    //                     id_unit: widget.unitForSeller,
+                    //                     lead_id: widget.lead_id,
+                    //                     getData: (b) {b ? getUnitDetail() : log("tidak get");}
+                    //                 ),
+                    //           ),
+                    //         );
+                    //       },
+                    //       text: "Edit Informasi Unit",
+                    //     )
+                    //     // ItemBottomSheetMenuCustom(
+                    //     //   icon: Icon(
+                    //     //     Icons.phone,
+                    //     //     color: Colors.black,
+                    //     //   ),
+                    //     //   onTap: () {
+                    //     //     Get.back();
+                    //     //     openwhatsapp(
+                    //     //       nomerTlp: modelLeadDetailUnit!.data!.kontak_pic == null ? "+6282140111456"
+                    //     //           : modelLeadDetailUnit!.data!.kontak_pic!.telp!.removeAllWhitespace,
+                    //     //     );
+                    //     //   },
+                    //     //   text: "Hubungi PIC",
+                    //     // ),
+                    //   ]) :
+                    // ,
                   ),
                   barrierDismissible: true,
                   barrierColor: Colors.transparent,
@@ -443,9 +480,9 @@ class _UnitState extends State<Unit> {
     );
   }
 
-  gantiPipline(Map data, int idPipeline, Function onUpdate){
-    var dataOpen = data['open'] as List<PipelineModel>;
-    var dataClose = data['close'] as List<PipelineModel>;
+  gantiPipline(Map data, int idPipeline, bool external, Function onUpdate){
+    var dataOpen = data['open'] as List<PipelineModel?>;
+    var dataClose = data['close'] as List<PipelineModel?>;
     Get.dialog(
       GestureDetector(
         onTap: ()=>Get.back(),
@@ -458,18 +495,20 @@ class _UnitState extends State<Unit> {
             ),
             Column(
               children: dataOpen.map((e) =>ItemBottomSheetMenuCustom(
-                active: idPipeline == e.id,
+                active: idPipeline == e!.id,
                 icon: Icon(
                   getIconPipeline(e.title),
                   color: Colors.black,
                 ),
                 onTap: () {
-                  controller.updatePipeline(
-                      leadId: widget.lead_id,
-                      idPipeline: e.id,
-                      titlePipe: e.title.toString(),
-                    onSuccess: (val)=>onUpdate(val)
-                  );
+                  if(!external){
+                    controller.updatePipeline(
+                        leadId: widget.lead_id,
+                        idPipeline: e.id,
+                        titlePipe: e.title.toString(),
+                        onSuccess: (val)=>onUpdate(val)
+                    );
+                  }
                   Get.back();
                 },
                 text: e.title.toString(),
@@ -488,7 +527,7 @@ class _UnitState extends State<Unit> {
             ),
             Column(
               children: dataClose.map((e) =>ItemBottomSheetMenuCustom(
-                active: idPipeline == e.id,
+                active: idPipeline == e!.id,
                 icon: Icon(
                   getIconPipeline(e.title),
                   color: Colors.black,

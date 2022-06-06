@@ -99,23 +99,24 @@ class _EditFotoUnitState extends State<EditFotoUnit> {
     Get.back();
     if (!isImageEditAwal) {
       if (index != null) {
-        XFile? xFile = await _picker.pickImage(
-            source: ImageSource.gallery, imageQuality: 10);
+        XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
         if (index == null) {
           if (xFile == null) {
             log("null");
           } else {
             setState(() {
               listImage.add(File(xFile.path));
+              isFirstLaunch = false;
             });
           }
         } else {
           setState(() {
             listImage[index] = File(xFile!.path);
+            isFirstLaunch = false;
           });
         }
       } else {
-        List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 10);
+        List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 70);
         if (mul!.length == 0) {
           log("kosong", name: "ini edit foto unit");
         } else {
@@ -132,15 +133,17 @@ class _EditFotoUnitState extends State<EditFotoUnit> {
               for (var q in mul) {
                 listImage.add(File(q.path));
               }
+              isFirstLaunch = false;
             });
           }
         }
       }
     } else {
-      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 10);
+      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
       log("ini edit image awal");
       setState(() {
         imageFile!(File(xFile!.path));
+        isFirstLaunch = false;
       });
     }
   }
@@ -149,7 +152,7 @@ class _EditFotoUnitState extends State<EditFotoUnit> {
     Get.back();
     XFile? xFile = await _picker.pickImage(
       source: ImageSource.camera,
-      imageQuality: 10,
+      imageQuality: 70,
     );
     if (!isImageEditAwal) {
       if (index == null) {
@@ -158,17 +161,20 @@ class _EditFotoUnitState extends State<EditFotoUnit> {
         } else {
           setState(() {
             listImage.add(File(xFile.path));
+            isFirstLaunch = false;
           });
         }
       } else {
         setState(() {
           listImage[index] = File(xFile!.path);
+          isFirstLaunch = false;
         });
       }
     } else {
       log("ini edit image awal");
       setState(() {
         imageFile!(File(xFile!.path));
+        isFirstLaunch = false;
       });
     }
   }
@@ -311,6 +317,7 @@ class _EditFotoUnitState extends State<EditFotoUnit> {
                 onPressed: () {
                   Utils.messageDialog(context, 'Informasi', 'Apakah anda ingin menjadikan ini sebagai Cover?', () {
                     setState(() {
+                      isFirstLaunch = false;
                       posCover = index!;
                     });
                     // simpanImage(index!);
@@ -446,9 +453,12 @@ class _EditFotoUnitState extends State<EditFotoUnit> {
   deleteFile({required int index}) {
     setState(() {
       listImage.removeAt(index);
+      isFirstLaunch = false;
       Get.back();
     });
   }
+
+  bool isFirstLaunch = true;
 
   @override
   void initState() {
@@ -516,48 +526,26 @@ class _EditFotoUnitState extends State<EditFotoUnit> {
 
       http.StreamedResponse response = await request.send();
 
-
-      var dsasad = response.toString();
       // var jsonDecode = json.decode(response.toString());
       // var dataJson = jsonDecode as Map<String, dynamic>;
       // print('RESPONSE ${json.encode(jsonDecode)}');
       if (response.statusCode == 200) {
         if (Get.isBottomSheetOpen == true) Get.back();
-        if(cover > 0 ){
-          Get.bottomSheet(
-            GlobalScreenNotif(
-              title: "Berhasil",
-              content: "Foto Cover berhasil dirubah",
-              onTap: () {
-                setState(() {
-                  posCover = 0;
-                  widget.getData(true);
-                });
-                // Navigator.pop(context);
-                Get.back();
-              },
-              textButton: "Selesai",
-            ),
-            isScrollControlled: true,
-          );
-        }else{
-          Get.bottomSheet(
-            GlobalScreenNotif(
-              title: "Berhasil",
-              content: "Foto Unit berhasil dirubah",
-              onTap: () {
-                setState(() {
-                  posCover = 0;
-                  widget.getData(true);
-                });
-                Navigator.pop(context);
-                Get.back();
-              },
-              textButton: "Selesai",
-            ),
-            isScrollControlled: true,
-          );
-        }
+        Get.bottomSheet(
+          GlobalScreenNotif(
+            title: "Berhasil",
+            content: "Edit Foto Unit berhasil",
+            onTap: () {
+              setState(() {
+                // posCover = 0;
+                widget.getData(true);
+              });
+              Get.back();
+            },
+            textButton: "Selesai",
+          ),
+          isScrollControlled: true,
+        );
       } else {
         var a = await response.stream.bytesToString();
         if (Get.isBottomSheetOpen == true) Get.back();
@@ -573,6 +561,20 @@ class _EditFotoUnitState extends State<EditFotoUnit> {
     });
   }
 
+  Future<bool> _onWillPop() async {
+    if(posCover > 0){
+      Utils.messageDialog(context, 'Informasi', 'Apakah anda yakin ingin keluar?', () {
+        Get.back();
+        // setState(() {
+        //   isFirstLaunch = false;
+        //   posCover = index!;
+        // });
+        // simpanImage(index!);
+      });
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -581,7 +583,13 @@ class _EditFotoUnitState extends State<EditFotoUnit> {
           widget.getData(true);
         });
         log("back");
-        Navigator.pop(context);
+        if(posCover > 0){
+          Utils.messageDialog(context, 'Informasi', 'Apakah anda yakin ingin keluar?', () {
+            Navigator.pop(context);
+          });
+        }else{
+          Navigator.pop(context);
+        }
         return true;
       },
       child: Scaffold(
@@ -592,7 +600,13 @@ class _EditFotoUnitState extends State<EditFotoUnit> {
               setState(() {
                 widget.getData(true);
               });
-              Navigator.pop(context);
+              if(posCover > 0){
+                Utils.messageDialog(context, 'Informasi', 'Apakah anda yakin ingin keluar?', () {
+                  Navigator.pop(context);
+                });
+              }else{
+                Navigator.pop(context);
+              }
             },
             child: Icon(Icons.arrow_back),
           ),
@@ -703,6 +717,10 @@ class _EditFotoUnitState extends State<EditFotoUnit> {
                                         log(modelDetailEditUnitImage!.data!.image![i].toString());
                                         v == null ? log("null") : log(v.path);
                                         setState(() {
+                                          isFirstLaunch = false;
+                                          if(posCover == i){
+                                            posCover = 0;
+                                          }
                                           imageAwall.removeWhere((element) => element == modelDetailEditUnitImage!.data!.image![i]);
                                           modelDetailEditUnitImage!.data!.image!.removeWhere((element) => element == modelDetailEditUnitImage!.data!.image![i],);
                                         });
@@ -711,6 +729,7 @@ class _EditFotoUnitState extends State<EditFotoUnit> {
                                         Utils.messageDialog(context, 'Informasi', 'Apakah anda ingin menjadikan ini sebagai Cover?', () {
                                           // simpanImage(index);
                                           setState(() {
+                                            isFirstLaunch = false;
                                             posCover = index;
                                           });
                                         });
@@ -734,21 +753,12 @@ class _EditFotoUnitState extends State<EditFotoUnit> {
                                                 ? log("tidak remove")
                                                 : imageAwall.removeWhere((element) => element == modelDetailEditUnitImage!.data!.image![i]);
                                           });
-
-                                          log("ini add");
                                         }
-
-                                        log(imageAwall.toString(),
-                                            name: "ini foto yg diupload");
-
-                                        log(imageChange.toString(),
-                                            name: "ini foto ganti baru");
                                       },
                                     ),
                                 for (var i = 0; i < listImage.length; i++)
                                   GestureDetector(
                                     onTap: () {
-                                      log("message");
                                       showDialog(
                                         context: context,
                                         builder: (context) => itemEdit(
@@ -778,28 +788,19 @@ class _EditFotoUnitState extends State<EditFotoUnit> {
                   ),
           ),
         ),
-        bottomNavigationBar: load ? null
-            : (listImage.length + modelDetailEditUnitImage!.data!.image!.length) <
-                        5 ||
-                    (listImage.length +
-                            modelDetailEditUnitImage!.data!.image!.length) >
-                        15
-                ? GestureDetector(
-                    onTap: () {
-                    },
-                    child: buttonDefaulLogin(
-                        backGround: yd_Color_Primary_Grey.withOpacity(0.3),
-                        textColor: Colors.white,
-                        text: "Simpan"),
-                  )
-                : GestureDetector(
-                    onTap: ()=>simpanImage(posCover),
-                    // onTap: ()=>controller.updateImage(context, widget.id_unit.toString(), dataAwal, imageChange),
-                    child: buttonDefaulLogin(
-                        backGround: yd_Color_Primary,
-                        textColor: Colors.white,
-                        text: "Simpan"),
-                  ),
+        bottomNavigationBar: load ? null :
+        (listImage.length + modelDetailEditUnitImage!.data!.image!.length) < 5 || (listImage.length + modelDetailEditUnitImage!.data!.image!.length) > 15 ?
+          buttonDefaulLogin(
+            backGround: yd_Color_Primary_Grey.withOpacity(0.3),
+            textColor: Colors.white,
+            text: "Simpan") :
+          GestureDetector(
+            onTap: ()=> !isFirstLaunch ? simpanImage(posCover):null,
+            child: buttonDefaulLogin(
+                backGround: !isFirstLaunch ? yd_Color_Primary : yd_Color_Primary_Grey.withOpacity(0.3),
+                textColor: Colors.white,
+                text: "Simpan"),
+          ),
       ),
     );
   }

@@ -246,4 +246,23 @@ class Utils{
     }
     return false;
   }
+
+  static Future<bool> removePlayerID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.remove('player_id');
+  }
+
+  static void savePlayerID(bool val) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('player_id', val);
+  }
+
+  static Future<bool> getPlayerID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var data = prefs.getBool('player_id');
+    if (data != null && data) {
+      return data;
+    }
+    return false;
+  }
 }

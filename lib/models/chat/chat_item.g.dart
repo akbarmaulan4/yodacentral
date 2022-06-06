@@ -2,7 +2,7 @@ part of 'chat_item.dart';
 ChatItem _$fromJson(Map<String, dynamic> json) {
   return ChatItem()
     ..id = json['id'] ?? 0
-    ..lead_id = json['lead_id'] != null ? json['lead_id'] is num ? (json['lead_id'] as num).toInt() ?? 0 : int.tryParse(json['lead_id'] as String) ?? 0: 0
+    ..lead_id = json['lead_id'] is num ? (json['lead_id'] as num).toInt() : 0
     ..user_id = json['user_id'] ?? 0
     ..message = json['message'] ?? ''
     ..created_at = json['created_at'] ?? ''

@@ -147,35 +147,41 @@ class _SellerSearchState extends State<SellerSearch> {
                       ],
                     ):search.text.isEmpty ? cantFind(
                         title: "Cari atau daftarkan seller",
-                        content: "Masukan nama seller dengan lengkap untuk memudahkan pencarian") : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Daftarkan Seller Baru", style: TextStyle(fontSize: 12, color: yd_Color_Primary_Grey,),),
-                          SizedBox(height: yd_defauld_padding),
-                          InkWell(
-                            onTap: () {
-                              Get.to(
-                                    () => AddSellerBaru(
-                                  isFinancing: widget.isFinancing,
-                                  nama: search.text,
-                                ),
-                                transition: Transition.noTransition,
-                              );
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(15),
-                              width: Get.width,
-                              decoration: BoxDecoration(color: yd_Color_Primary.withOpacity(0.1), borderRadius: BorderRadius.circular(100),),
-                              child: Row(
-                                children: [Icon(Icons.add),
-                                  SizedBox(width: 15),
-                                  Text(search.text, style: TextStyle(fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: yd_defauld_padding),
-                        ]),
+                        content: "Masukan nama seller dengan lengkap untuk memudahkan pencarian") :
+                        Column(
+                          children: [
+                            Text("Tidak ada Seller ${search.text}", style: TextStyle(fontSize: 12, color: yd_Color_Primary_Grey,),),
+                          ],
+                        )
+                        // : Column(
+                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        // children: [
+                        //   Text("Daftarkan Seller Baru", style: TextStyle(fontSize: 12, color: yd_Color_Primary_Grey,),),
+                        //   SizedBox(height: yd_defauld_padding),
+                        //   InkWell(
+                        //     onTap: () {
+                        //       Get.to(
+                        //             () => AddSellerBaru(
+                        //           isFinancing: widget.isFinancing,
+                        //           nama: search.text,
+                        //         ),
+                        //         transition: Transition.noTransition,
+                        //       );
+                        //     },
+                        //     child: Container(
+                        //       padding: EdgeInsets.all(15),
+                        //       width: Get.width,
+                        //       decoration: BoxDecoration(color: yd_Color_Primary.withOpacity(0.1), borderRadius: BorderRadius.circular(100),),
+                        //       child: Row(
+                        //         children: [Icon(Icons.add),
+                        //           SizedBox(width: 15),
+                        //           Text(search.text, style: TextStyle(fontWeight: FontWeight.bold)),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ),
+                        //   SizedBox(height: yd_defauld_padding),
+                        // ]),
                   )),
                 ],
               ),

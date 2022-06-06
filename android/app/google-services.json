@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "464956941170",
+    "project_id": "yodacentral-8e977",
+    "storage_bucket": "yodacentral-8e977.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:464956941170:android:2805536f19453be77fb3eb",
+        "android_client_info": {
+          "package_name": "com.exampple.yodacentral"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "464956941170-bgsh93bsoeu1319av971j4noegehn4rl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPyeAMbh-UUJ5ieC2-TH_OlZzNgeJ5SSc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "464956941170-bgsh93bsoeu1319av971j4noegehn4rl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

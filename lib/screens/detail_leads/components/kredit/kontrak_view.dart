@@ -17,6 +17,7 @@ import 'package:yodacentral/controller/kredit/kredit_controller.dart';
 import 'package:yodacentral/models/model_wilayah.dart';
 import 'package:yodacentral/screens/add_new_lead/add_new_lead_financing/components/cek_nomor-polisi.dart';
 import 'package:yodacentral/screens/add_new_lead/add_new_lead_financing/components/mobil_diiklan.dart';
+import 'package:yodacentral/utils/debouncher.dart';
 import 'package:yodacentral/utils/utils.dart';
 
 class KontrakView extends StatefulWidget {
@@ -32,6 +33,7 @@ class _KontrakViewState extends State<KontrakView> {
 
   KreditController controller = Get.put(KreditController());
   final ImagePicker _picker = ImagePicker();
+  var debouncher = new Debouncer(milliseconds: 500);
 
   @override
   void initState() {
@@ -55,20 +57,18 @@ class _KontrakViewState extends State<KontrakView> {
           children: [
             Text('Kontrak'),
             SizedBox(height: 15),
-            // customeField(
-            //   label: 'Nomor Kontrak Kredit',
-            //   controller: controller.edtNoKontrak,
-            //   focusNode: controller.focusNoKontrak,
-            //   onChanged: (val){},
-            //   // type: TextInputType.number,
-            // ),
             standartField(
               label: "Nomor Kontrak Kredit",
               controller: controller.edtNoKontrak,
               type: TextInputType.number,
               focused: controller.noKontrakFocus.value,
               node: controller.focusNoKontrak,
-              onChange: (val)=>controller.setEnableKontrak()
+              errorMessag: controller.msgErrorNoKontrak.value,
+              onChange: (val){
+                debouncher.run(() {
+                  controller.checkNoKontrak(context, controller.edtNoKontrak.text, widget.lead_id!.toString());
+                });
+              }
             ),
             SizedBox(height: 15),
             Text('Kredit'),
@@ -701,7 +701,7 @@ class _KontrakViewState extends State<KontrakView> {
   getImageGallery({int? index}) async {
     Get.back();
     if (index != null) {
-      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 100);
+      XFile? xFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 30);
       if (index == null) {
         if (xFile == null) {
           log("null");
@@ -716,7 +716,7 @@ class _KontrakViewState extends State<KontrakView> {
         });
       }
     } else {
-      List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 100);
+      List<XFile>? mul = await _picker.pickMultiImage(imageQuality: 30);
       if (mul!.length == 0) {
         log("kosong", name: "ini unggah foto");
       } else {
@@ -744,7 +744,7 @@ class _KontrakViewState extends State<KontrakView> {
     Get.back();
     XFile? xFile = await _picker.pickImage(
       source: ImageSource.camera,
-      imageQuality: 100,
+      imageQuality: 30,
     );
     if (index == null) {
       if (xFile == null) {
@@ -862,6 +862,7 @@ class _KontrakViewState extends State<KontrakView> {
     Function? onChange,
     FocusNode? node,
     bool focused = false,
+    String? errorMessag,
   }){
     return  Container(
       margin: EdgeInsets.only(bottom: 10),
@@ -884,6 +885,7 @@ class _KontrakViewState extends State<KontrakView> {
             borderSide: BorderSide(color: yd_Color_Primary_Grey, width: 1),
             borderRadius: BorderRadius.circular(4),
           ),
+          errorText: errorMessag != '' ? errorMessag : null,
           fillColor: Colors.white,
           hintText: label,
           labelText: label,

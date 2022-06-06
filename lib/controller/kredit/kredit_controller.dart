@@ -30,6 +30,7 @@ class KreditController extends GetxController{
   RxList<File> listImagesKontrak =  <File>[].obs;
   RxList<File> listImagesJaminan =  <File>[].obs;
   RxList<String> allFoto =  <String>[].obs;
+  RxString msgErrorNoKontrak =  ''.obs;
 
   TextEditingController edtHargaJual = TextEditingController();
   TextEditingController edtHargaOTR = TextEditingController();
@@ -423,28 +424,6 @@ class KreditController extends GetxController{
     listImagesJaminan.value = data;
   }
 
-  // loadImages(){
-  //   listImages.value = dataImage;
-  // }
-  // addImages(List<File> data){
-  //   for (var q in data) {
-  //     _dataImage.add(File(q.path));
-  //   }
-  //   listImages.value = dataImage;
-  // }
-  //
-  // changeImage(List<File> dataImage, int index, String path){
-  //   dataImage[index] = File(path);
-  //   _dataImage = dataImage;
-  //   listImages.value = dataImage;
-  // }
-  //
-  // removeImage(int index, Function onRefresh){
-  //   dataImage.removeAt(index);
-  //   listImages.value = dataImage;
-  //   onRefresh();
-  // }
-
   setEnableJaminan(){
     // enableButtonJaminan.value = true;
     if(edtHargaJual.text != '' ||
@@ -494,6 +473,9 @@ class KreditController extends GetxController{
     ) {
       enableButtonKontrak.value = true;
     }else{
+      enableButtonKontrak.value = false;
+    }
+    if(msgErrorNoKontrak.value != ''){
       enableButtonKontrak.value = false;
     }
   }
@@ -1436,23 +1418,8 @@ class KreditController extends GetxController{
     Get.back();
     if (response.statusCode == 200) {
       onSuccess!();
-      // if (Get.isBottomSheetOpen == true) Get.back();
-      // Get.back();
-      // Get.bottomSheet(
-      //   GlobalScreenNotif(
-      //     title: "Berhasil",
-      //     content: "Data Kredit Berhasil dikirim",
-      //     onTap: () {
-      //       Get.back();
-      //       onSucess!();
-      //     },
-      //     textButton: "Selesai",
-      //   ),
-      //   isScrollControlled: true,
-      // );
     } else {
       Get.back();
-      // log(await response.stream.bytesToString());
       if (Get.isBottomSheetOpen == true) Get.back();
       rawBottomNotif(
         message: response.statusCode.toString() +
@@ -1539,6 +1506,37 @@ class KreditController extends GetxController{
     log(response.statusCode.toString());
     log(response.reasonPhrase.toString());
     log(await response.stream.bytesToString());
+    }
+  }
+
+  checkNoKontrak(BuildContext context, String noKontak, String leadID) async {
+    // Utils.loading(context, 'Mohon tunggu...');
+    var data = await SaveRoot.callSaveRoot();
+    String url = '${ApiUrl.domain.toString()}/api/cekUnique/nomor-kredit';
+    print('URL ${url}');
+    var body = {
+      'id': leadID,
+      'value': noKontak,
+    };
+    print('BODY ${jsonEncode(body)}');
+    var res = await http.post(Uri.parse(url), headers: {'Authorization': 'Bearer ' + data.token.toString()}, body: body);
+    // Get.back();
+    if (res.statusCode == 200) {
+      var jsonDecode = json.decode(res.body);
+      var dataJson = jsonDecode as Map<String, dynamic>;
+      msgErrorNoKontrak.value = '';
+      setEnableKontrak();
+      // onSuccess(modelDetail);
+    }else{
+      var jsonDecode = json.decode(res.body);
+      var dataJson = jsonDecode as Map<String, dynamic>;
+      msgErrorNoKontrak.value = dataJson['message'];
+      setEnableKontrak();
+      // rawBottomNotif(
+      //   message: dataJson['message'],
+      //   colorFont: Colors.white,
+      //   backGround: Colors.red,
+      // );
     }
   }
 }

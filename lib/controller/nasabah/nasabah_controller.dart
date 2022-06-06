@@ -2083,15 +2083,16 @@ class NasabahController extends GetxController{
       onSuccess!();
 
     } else {
-      Get.back();
-      if (Get.isBottomSheetOpen == true) Get.back();
-      rawBottomNotif(
-        message: response.statusCode.toString() +
-            " | " +
-            await response.stream.asBroadcastStream().isBroadcast.toString(),
-        colorFont: Colors.white,
-        backGround: Colors.red,
-      );
+      onSuccess!();
+      // Get.back();
+      // if (Get.isBottomSheetOpen == true) Get.back();
+      // rawBottomNotif(
+      //   message: response.statusCode.toString() +
+      //       " | " +
+      //       await response.stream.asBroadcastStream().isBroadcast.toString(),
+      //   colorFont: Colors.white,
+      //   backGround: Colors.red,
+      // );
     }
   }
 
